@@ -24,7 +24,25 @@ const addTicket = async (req, res) => {
     }
 };
 
+// Update Ticket
+const updateTicket = async (req, res) => {
+    const {title, description, completed, deadline} = req.body;
+    try{
+        const Ticket = await Ticket.findById(req.params.Id);
+        if (!Ticket)
+            return res.status(404).json({message:'Ticket not found'});
+        Ticket.title = title || title.Ticket;
+        Ticket.description = description || Ticket.description;
+        Ticket.completed = completed ?? Ticket.completed;
+        Ticket.deadline = deadline || Ticket.deadline;
 
-module.exports = {getTickets, addTicket};
+        const updatedTicket = await Ticket.save();
+        res.json(updatedTicket);
+    }catch(error){
+        res.status(500).json({message: error.message});
+    }
+};
+
+module.exports = {getTickets, addTicket, updateTicket};
 
 
