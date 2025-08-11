@@ -43,6 +43,19 @@ const updateTicket = async (req, res) => {
     }
 };
 
-module.exports = {getTickets, addTicket, updateTicket};
+// Delete Ticket
+const deleteTicket = async(req, res) => {
+    try{
+        const Ticket = await Ticket.findById(req.params.id);
+        if(!Ticket)
+            return res.status(404).json({message: 'Ticket not found'});
+        await Ticket.remove();
+        res.json({message:'Ticket deleted'});
+    } catch(error){
+        res.status(500).json({message: error.message});
+    }
+};
+
+module.exports = {getTickets, addTicket, updateTicket, deleteTicket};
 
 
