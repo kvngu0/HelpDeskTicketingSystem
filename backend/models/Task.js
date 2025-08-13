@@ -1,7 +1,7 @@
 
 const mongoose = require('mongoose');
 
-const ticketSchema = new mongoose.Schema({
+const taskSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     title: { type: String, required: true },
     description: { type: String },
@@ -9,4 +9,4 @@ const ticketSchema = new mongoose.Schema({
     deadline: { type: Date },
 });
 
-module.exports = mongoose.model('Ticket', ticketSchema);
+module.exports = mongoose.model('Task', taskSchema);
