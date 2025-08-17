@@ -1,6 +1,6 @@
 // Get Task Function (Read)
 
-const Task = require('../models/Task')
+const Task = require('../models/User')
 
 const getTasks = async (req, res) => {
 
@@ -20,7 +20,8 @@ const getTasks = async (req, res) => {
 const addTask = async (req, res) => {
     const {title, description, deadline} = req.body;
     try{
-        const task = await Task.create({userId: req.user.id, title, description, deadline});
+        if (taskExists) return res.status(400).json({ message: 'Ticket already exists' });
+        const task = await Task.create({ title, description, deadline });
         res.status(201).json(task);
     } catch(error) {
         res.status(500).json({message: error.message});
@@ -30,7 +31,7 @@ const addTask = async (req, res) => {
 
 // Update Task
 const updateTask = async (req, res) => {
-    const {title, description, completed, deadline} = req.body;
+    const {title, description, completed, deadline } = req.body;
     try{
         const task = await Task.findById(req.params.Id);
         if (!task)

@@ -8,13 +8,16 @@ const generateToken = (id) => {
 };
 
 const registerUser = async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, title } = req.body;
     try {
+        const titleExists = await User.findOne({title});
+        if (titleExists) return res.status(400).json({message: 'title does not exist'});
+
         const userExists = await User.findOne({ email });
         if (userExists) return res.status(400).json({ message: 'User already exists' });
 
-        const user = await User.create({ name, email, password });
-        res.status(201).json({ id: user.id, name: user.name, email: user.email, token: generateToken(user.id) });
+        const user = await User.create({ name, email, password, title });
+        res.status(201).json({ id: user.id, name: user.name, email: user.email, title: user.title, token: generateToken(user.id) });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -46,6 +49,7 @@ const getProfile = async (req, res) => {
         email: user.email,
         university: user.university,
         address: user.address,
+        title: user.title,
       });
     } catch (error) {
       res.status(500).json({ message: 'Server error', error: error.message });
@@ -57,14 +61,17 @@ const updateUserProfile = async (req, res) => {
         const user = await User.findById(req.user.id);
         if (!user) return res.status(404).json({ message: 'User not found' });
 
-        const { name, email, university, address } = req.body;
+        const { name, email, university, address, title } = req.body;
         user.name = name || user.name;
         user.email = email || user.email;
         user.university = university || user.university;
         user.address = address || user.address;
-
+        user.title = title || user.title;
         const updatedUser = await user.save();
-        res.json({ id: updatedUser.id, name: updatedUser.name, email: updatedUser.email, university: updatedUser.university, address: updatedUser.address, token: generateToken(updatedUser.id) });
+        res.json({ id: updatedUser.id, name: updatedUser.name, email: updatedUser.email, 
+            university: updatedUser.university, address: updatedUser.address, title: updatedUser.title,
+            token: generateToken(updatedUser.id) });
+            
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
